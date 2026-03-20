@@ -55,7 +55,7 @@ exports.createOrder = async (req, res) => {
     } catch (error) {
         await conn.rollback();
         console.error(error);
-        res.status(500).json({ message: 'Server error', debug: error.message });
+        res.status(500).json({ message: 'Server error' });
     } finally {
         conn.release();
     }

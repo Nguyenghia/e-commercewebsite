@@ -24,6 +24,19 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+app.get('/api/migrate', async (req, res) => {
+    try {
+        const db = require('./config/db');
+        await db.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_earned INT NOT NULL DEFAULT 0`);
+        await db.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address TEXT`);
+        await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS discount INT NOT NULL DEFAULT 0`);
+        await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS points INT NOT NULL DEFAULT 0`);
+        res.json({ status: 'ok', message: 'Migrations applied successfully' });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
 app.get('/api/health', async (req, res) => {
     try {
         const db = require('./config/db');
