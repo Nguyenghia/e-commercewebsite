@@ -5,12 +5,12 @@ const initDB = async () => {
     try {
         const connection = await mysql.createConnection({
             host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT || '3306'),
             user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : false
         });
-
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-        await connection.query(`USE \`${process.env.DB_NAME}\`;`);
 
         await connection.query(`
             CREATE TABLE IF NOT EXISTS users (
@@ -95,11 +95,15 @@ const initDB = async () => {
 
 initDB();
 
+const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : false;
+
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '3306'),
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    ssl: sslConfig,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
