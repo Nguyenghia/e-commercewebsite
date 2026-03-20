@@ -25,16 +25,31 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/migrate', async (req, res) => {
-    try {
-        const db = require('./config/db');
-        await db.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_earned INT NOT NULL DEFAULT 0`);
-        await db.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address TEXT`);
-        await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS discount INT NOT NULL DEFAULT 0`);
-        await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS points INT NOT NULL DEFAULT 0`);
-        res.json({ status: 'ok', message: 'Migrations applied successfully' });
-    } catch (err) {
-        res.status(500).json({ status: 'error', message: err.message });
+    const db = require('./config/db');
+    const results = [];
+    const migrations = [
+        { table: 'orders',   column: 'points_earned',    sql: 'ALTER TABLE orders ADD COLUMN points_earned INT NOT NULL DEFAULT 0' },
+        { table: 'orders',   column: 'shipping_address', sql: 'ALTER TABLE orders ADD COLUMN shipping_address TEXT' },
+        { table: 'products', column: 'discount',         sql: 'ALTER TABLE products ADD COLUMN discount INT NOT NULL DEFAULT 0' },
+        { table: 'users',    column: 'points',           sql: 'ALTER TABLE users ADD COLUMN points INT NOT NULL DEFAULT 0' },
+    ];
+    for (const m of migrations) {
+        try {
+            const [rows] = await db.query(
+                `SELECT COUNT(*) as cnt FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?`,
+                [m.table, m.column]
+            );
+            if (rows[0].cnt === 0) {
+                await db.query(m.sql);
+                results.push(`Added: ${m.table}.${m.column}`);
+            } else {
+                results.push(`Skipped (exists): ${m.table}.${m.column}`);
+            }
+        } catch (err) {
+            results.push(`Error on ${m.table}.${m.column}: ${err.message}`);
+        }
     }
+    res.json({ status: 'ok', results });
 });
 
 app.get('/api/health', async (req, res) => {

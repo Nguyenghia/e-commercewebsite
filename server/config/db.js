@@ -29,8 +29,8 @@ const initDB = async () => {
             ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'sales', 'customer') NOT NULL DEFAULT 'customer';
         `);
         await connection.query(`
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS points INT NOT NULL DEFAULT 0;
-        `);
+            ALTER TABLE users ADD COLUMN points INT NOT NULL DEFAULT 0;
+        `).catch(() => {});
 
         await connection.query(`
             CREATE TABLE IF NOT EXISTS categories (
@@ -55,8 +55,8 @@ const initDB = async () => {
             );
         `);
         await connection.query(`
-            ALTER TABLE products ADD COLUMN IF NOT EXISTS discount INT NOT NULL DEFAULT 0;
-        `);
+            ALTER TABLE products ADD COLUMN discount INT NOT NULL DEFAULT 0;
+        `).catch(() => {});
 
         await connection.query(`
             CREATE TABLE IF NOT EXISTS orders (
@@ -71,8 +71,8 @@ const initDB = async () => {
             );
         `);
         await connection.query(`
-            ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_earned INT NOT NULL DEFAULT 0;
-        `);
+            ALTER TABLE orders ADD COLUMN points_earned INT NOT NULL DEFAULT 0;
+        `).catch(() => {});
 
         await connection.query(`
             CREATE TABLE IF NOT EXISTS order_items (
