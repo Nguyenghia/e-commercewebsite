@@ -9,7 +9,7 @@ const initDB = async () => {
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
-            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : false
+            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
         });
 
         await connection.query(`
@@ -95,7 +95,7 @@ const initDB = async () => {
 
 initDB();
 
-const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : false;
+const sslConfig = process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false;
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
