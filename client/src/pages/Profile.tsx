@@ -40,7 +40,7 @@ const Profile: React.FC = () => {
     };
 
     const loadProfile = () => {
-        axios.get('http://localhost:5000/api/users/profile', {
+        axios.get('/api/users/profile', {
             headers: { Authorization: `Bearer ${token}` },
         }).then(r => {
             setProfile(r.data);
@@ -55,7 +55,7 @@ const Profile: React.FC = () => {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await axios.put('http://localhost:5000/api/users/profile',
+            const res = await axios.put('/api/users/profile',
                 { username, email },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

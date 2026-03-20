@@ -32,7 +32,7 @@ const OrderHistory: React.FC = () => {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/orders/my', {
+        axios.get('/api/orders/my', {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => setOrders(res.data))
             .finally(() => setLoading(false));

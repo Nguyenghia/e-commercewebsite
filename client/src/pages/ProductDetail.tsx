@@ -24,7 +24,7 @@ const ProductDetail: React.FC = () => {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/products/${id}`, {
+        axios.get(`/api/products/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => setProduct(res.data))
             .catch(() => navigate('/shop'))

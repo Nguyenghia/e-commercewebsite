@@ -63,21 +63,21 @@ const AdminDashboard: React.FC = () => {
     };
 
     const loadStats = () =>
-        axios.get('http://localhost:5000/api/dashboard/stats', { headers })
+        axios.get('/api/dashboard/stats', { headers })
             .then(r => setStats(r.data))
             .catch(() => flash('Failed to load stats', 'error'));
 
     const loadProducts = () =>
         Promise.all([
-            axios.get('http://localhost:5000/api/products', { headers }),
-            axios.get('http://localhost:5000/api/products/categories', { headers }),
+            axios.get('/api/products', { headers }),
+            axios.get('/api/products/categories', { headers }),
         ]).then(([p, c]) => { setProducts(p.data); setCategories(c.data); });
 
     const loadOrders = () =>
-        axios.get('http://localhost:5000/api/orders', { headers }).then(r => setOrders(r.data));
+        axios.get('/api/orders', { headers }).then(r => setOrders(r.data));
 
     const loadUsers = () =>
-        axios.get('http://localhost:5000/api/users', { headers }).then(r => setUsers(r.data));
+        axios.get('/api/users', { headers }).then(r => setUsers(r.data));
 
     useEffect(() => {
         if (tab === 'overview') loadStats();
@@ -113,10 +113,10 @@ const AdminDashboard: React.FC = () => {
         };
         try {
             if (editingId) {
-                await axios.put(`http://localhost:5000/api/products/${editingId}`, payload, { headers });
+                await axios.put(`/api/products/${editingId}`, payload, { headers });
                 flash('Product updated.');
             } else {
-                await axios.post('http://localhost:5000/api/products', payload, { headers });
+                await axios.post('/api/products', payload, { headers });
                 flash('Product created.');
             }
             setShowForm(false); loadProducts();
@@ -128,7 +128,7 @@ const AdminDashboard: React.FC = () => {
     const handleDeleteProduct = async (id: number) => {
         if (!confirm('Delete this product?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/products/${id}`, { headers });
+            await axios.delete(`/api/products/${id}`, { headers });
             flash('Product deleted.'); loadProducts();
         } catch { flash('Error deleting product', 'error'); }
     };
@@ -136,7 +136,7 @@ const AdminDashboard: React.FC = () => {
     const handleAddCategory = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newCategory.trim()) return;
-        await axios.post('http://localhost:5000/api/products/categories/new', { name: newCategory }, { headers });
+        await axios.post('/api/products/categories/new', { name: newCategory }, { headers });
         setNewCategory(''); flash('Category added.'); loadProducts();
     };
 
@@ -151,7 +151,7 @@ const AdminDashboard: React.FC = () => {
         const edit = inlineEdit[p.id];
         if (!edit) return;
         try {
-            await axios.put(`http://localhost:5000/api/products/${p.id}`, {
+            await axios.put(`/api/products/${p.id}`, {
                 name: p.name, description: p.description,
                 price: parseFloat(edit.price), stock: p.stock,
                 discount: parseInt(edit.discount) || 0,
@@ -164,13 +164,13 @@ const AdminDashboard: React.FC = () => {
 
     // ── Orders ────────────────────────────────────────
     const handleStatusChange = async (orderId: number, status: string) => {
-        await axios.patch(`http://localhost:5000/api/orders/${orderId}/status`, { status }, { headers });
+        await axios.patch(`/api/orders/${orderId}/status`, { status }, { headers });
         flash('Order status updated.'); loadOrders();
     };
 
     // ── Users ─────────────────────────────────────────
     const handleRoleChange = async (userId: number, role: string) => {
-        await axios.patch(`http://localhost:5000/api/users/${userId}/role`, { role }, { headers });
+        await axios.patch(`/api/users/${userId}/role`, { role }, { headers });
         flash('User role updated.'); loadUsers();
     };
 

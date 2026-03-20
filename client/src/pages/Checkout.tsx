@@ -18,7 +18,7 @@ const Checkout: React.FC = () => {
         setLoading(true);
         setError('');
         try {
-            await axios.post('http://localhost:5000/api/orders', {
+            await axios.post('/api/orders', {
                 items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
                 shipping_address: address
             }, { headers: { Authorization: `Bearer ${token}` } });

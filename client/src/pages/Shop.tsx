@@ -32,8 +32,8 @@ const Shop: React.FC = () => {
     useEffect(() => {
         const headers = { Authorization: `Bearer ${token}` };
         Promise.all([
-            axios.get('http://localhost:5000/api/products', { headers }),
-            axios.get('http://localhost:5000/api/products/categories', { headers })
+            axios.get('/api/products', { headers }),
+            axios.get('/api/products/categories', { headers })
         ]).then(([prodRes, catRes]) => {
             setProducts(prodRes.data);
             setCategories(catRes.data);
